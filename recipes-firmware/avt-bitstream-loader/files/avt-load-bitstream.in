@@ -1,0 +1,30 @@
+#!/bin/bash
+
+
+if [ "$#" -ne 1 ] ; then
+  echo "Usage: $0 bitstream" >&2
+  exit 1
+fi
+
+config_name="@@AVT_BITSTREAM_PREFIX@@-$1"
+bitstream_dir="/lib/firmware/xilinx/$config_name"
+
+if ! [ -e "$bitstream_dir" ]; then
+	echo "Bitstream not found"
+ 	exit 1
+fi
+
+if [ -e "/configfs/device-tree/overlays/Full" ]; then
+	fpgautil -R -n Full
+fi
+
+
+modprobe -rq avt_csi2
+
+bitstream_file="$bitstream_dir/$config_name.bin"
+overlay_file="$bitstream_dir/$config_name.dtbo"
+
+fpgautil -b $bitstream_file -o $overlay_file -n Full -f Full
+modprobe -q avt_csi2
+
+#fixup_media_pipeline

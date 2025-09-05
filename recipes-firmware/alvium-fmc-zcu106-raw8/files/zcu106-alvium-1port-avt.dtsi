@@ -1,0 +1,536 @@
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/media/xilinx-vip.h>
+
+/*
+//dt-bindings/media/xilinx-vip.h
+#define XVIP_VF_YUV_422			0
+#define XVIP_VF_YUV_444			1
+#define XVIP_VF_RBG				2
+#define XVIP_VF_YUV_420			3
+#define XVIP_VF_YUVA_422		4
+#define XVIP_VF_YUVA_444		5
+#define XVIP_VF_RGBA			6
+#define XVIP_VF_YUVA_420		7
+#define XVIP_VF_YUVD_422		8
+#define XVIP_VF_YUVD_444		9
+#define XVIP_VF_RGBD			10
+#define XVIP_VF_YUVD_420		11
+#define XVIP_VF_MONO_SENSOR		12
+#define XVIP_VF_CUSTOM2			13
+#define XVIP_VF_CUSTOM3			14
+#define XVIP_VF_CUSTOM4			15
+#define XVIP_VF_VUY_422			16
+#define XVIP_VF_BGRX			17
+#define XVIP_VF_YUVX			18
+#define XVIP_VF_XBGR			19
+#define XVIP_VF_Y_GREY			20
+#define XVIP_VF_XRGB			21
+*/
+
+/* MIPI CSI-2 Data Types from spec */
+#define XCSI_DT_YUV4228B	0x1e
+#define XCSI_DT_YUV42210B	0x1f
+#define XCSI_DT_RGB444		0x20
+#define XCSI_DT_RGB555		0x21
+#define XCSI_DT_RGB565		0x22
+#define XCSI_DT_RGB666		0x23
+#define XCSI_DT_RGB888		0x24
+#define XCSI_DT_RAW6		0x28
+#define XCSI_DT_RAW7		0x29
+#define XCSI_DT_RAW8		0x2a
+#define XCSI_DT_RAW10		0x2b
+#define XCSI_DT_RAW12		0x2c
+#define XCSI_DT_RAW14		0x2d
+#define XCSI_DT_RAW16		0x2e
+#define XCSI_DT_RAW20		0x2f
+
+//Camera 0
+
+&mipi_csi_port0camera_0_mipi_csi2_rx_subsyst {
+	/delete-property/ xlnx,cfa-pattern;
+};
+&mipi_csi_port1camera_0_mipi_csi2_rx_subsyst {
+     /delete-property/ xlnx,cfa-pattern;
+};
+
+
+&camera_0_v_frmbuf_wr {
+  xlnx,vid-formats = "rgb888", "bgr888", "xbgr8888", "xrgb8888", "uyvy", "y8", "vuy888", "xvuy8888", "yuyv", "nv12", "nv16", "y_u_v8", "tp31";
+  xlnx,dma-align = <32>;
+  xlnx,max-height = <16384>;
+  dma-coherent;
+  status = "okay";
+};
+
+
+&camera_0_mipi_csi2_rx_subsyst {
+  xlnx,csi-pxl-format = <XCSI_DT_RAW8>;/*<XCSI_DT_YUV4228B>;"RAW8";*/
+  status = "okay";
+mipi_csi_portscamera_0_mipi_csi2_rx_subsyst_0: ports {
+#address-cells = <1>;
+#size-cells = <0>;
+    xlnx,csi-pxl-format = <XCSI_DT_RAW8>;
+  mipi_csi_port1camera_0_mipi_csi2_rx_subsyst: port@1 {
+      /* Fill cfa-pattern=rggb for raw data types, other fields video-format and video-width user needs to fill */
+      reg = <1>;
+      /*xlnx,cfa-pattern = "rggb";*/
+      xlnx,video-format = <XVIP_VF_MONO_SENSOR>;/*<3>; XVIP_VF_MONO_SENSOR<12>;XVIP_VF_MONO_SENSOR*/
+      xlnx,csi-pxl-format = <XCSI_DT_RAW8>;
+      xlnx,video-width = <8>;
+      direction = "output";
+      //			mipi_csirx_outmipi_csi2rxss_0: endpoint {
+      //				remote-endpoint = <&v_frmbuf_wr_csi_0mipi_csi2rxss_0>;
+      //			};
+    };
+  mipi_csi_port0camera_0_mipi_csi2_rx_subsyst: port@0 {
+      /* Fill cfa-pattern=rggb for raw data types, other fields video-format,video-width user needs to fill */
+      /* User need to add something like remote-endpoint=<&out> under the node csiss_in:endpoint */
+      reg = <0>;
+      /*xlnx,cfa-pattern = "rggb";*/
+      xlnx,csi-pxl-format = <XCSI_DT_RAW8>;
+      xlnx,video-format = <XVIP_VF_MONO_SENSOR>;/*<3>; XVIP_VF_MONO_SENSOR<12>;XVIP_VF_MONO_SENSOR*/
+      xlnx,video-width = <8>;
+      direction = "input";
+    mipi_csi_incamera_0_mipi_csi2_rx_subsyst: endpoint {
+        data-lanes = <1 2 3 4>;
+        remote-endpoint = <&sensor_out_0>;
+      };
+    };
+  };
+};
+
+
+
+&camera_0_axi_iic {
+  //clocks = <&vid_s_axi_clk>;
+
+  avt_camera_0@3c {
+    compatible = "alliedvision,avt3"; /*"alliedvision,avt_csi2";*/
+
+    reg = <0x3c>;
+    csi_id = <0>;
+
+    /* powerdown-gpios = <&axi_gpio_0 0 GPIO_ACTIVE_LOW>;
+		reset-gpios = <&axi_gpio_0 4 GPIO_ACTIVE_LOW>; */
+
+    bcrm_wait_timeout = <5111>; /*<4000>;*/
+    mipi_csi;
+    status = "okay";
+
+    //streamon_delay = <100>;
+    phy_reset_on_start;
+    x_force_reset_on_init;
+
+    avt-ignore-yuv420_8_leg_avail;
+    avt-ignore-yuv420_8_avail;
+    avt-ignore-yuv420_10_avail;
+    avt-ignore-yuv420_8_csps_avail;
+    avt-ignore-yuv420_10_csps_avail;
+    x_avt-ignore-yuv422_8_avail;
+    avt-ignore-yuv422_10_avail;
+    x_avt-ignore-rgb888_avail;
+    avt-ignore-rgb666_avail;
+    avt-ignore-rgb565_avail;
+    avt-ignore-rgb555_avail;
+    avt-ignore-rgb444_avail;
+    avt-ignore-raw6_avail;
+    avt-ignore-raw7_avail;
+    //avt-ignore-raw8_avail;
+    avt-ignore-raw10_avail;
+    avt-ignore-raw12_avail;
+    avt-ignore-raw14_avail;
+
+    port {
+    sensor_out_0: endpoint {
+        remote-endpoint = <&mipi_csi_incamera_0_mipi_csi2_rx_subsyst>;
+        data-lanes = <1 2 3 4>;
+        clock-lanes = <0>;
+        link-frequencies = /bits/ 64 <750000000>;
+      };
+    };
+  };
+
+
+
+};
+
+
+//Camera 1
+
+&mipi_csi_port0camera_1_mipi_csi2_rx_subsyst {
+	/delete-property/ xlnx,cfa-pattern;
+};
+&mipi_csi_port1camera_1_mipi_csi2_rx_subsyst {
+     /delete-property/ xlnx,cfa-pattern;
+};
+
+
+&camera_1_v_frmbuf_wr {
+  xlnx,vid-formats = "rgb888", "bgr888", "xbgr8888", "xrgb8888", "uyvy", "y8", "vuy888", "xvuy8888", "yuyv", "nv12", "nv16", "y_u_v8", "tp31";
+  xlnx,dma-align = <32>;
+  xlnx,max-height = <16384>;
+  dma-coherent;
+  status = "okay";
+};
+
+
+&camera_1_mipi_csi2_rx_subsyst {
+  xlnx,csi-pxl-format = <XCSI_DT_RAW8>;/*<XCSI_DT_YUV4228B>;"RAW8";*/
+  status = "okay";
+mipi_csi_portscamera_1_mipi_csi2_rx_subsyst_0: ports {
+#address-cells = <1>;
+#size-cells = <0>;
+    xlnx,csi-pxl-format = <XCSI_DT_RAW8>;
+  mipi_csi_port1camera_1_mipi_csi2_rx_subsyst: port@1 {
+      /* Fill cfa-pattern=rggb for raw data types, other fields video-format and video-width user needs to fill */
+      reg = <1>;
+      /*xlnx,cfa-pattern = "rggb";*/
+      xlnx,video-format = <XVIP_VF_MONO_SENSOR>;/*<3>; XVIP_VF_MONO_SENSOR<12>;XVIP_VF_MONO_SENSOR*/
+      xlnx,csi-pxl-format = <XCSI_DT_RAW8>;
+      xlnx,video-width = <8>;
+      direction = "output";
+      //			mipi_csirx_outmipi_csi2rxss_0: endpoint {
+      //				remote-endpoint = <&v_frmbuf_wr_csi_0mipi_csi2rxss_0>;
+      //			};
+    };
+  mipi_csi_port0camera_1_mipi_csi2_rx_subsyst: port@0 {
+      /* Fill cfa-pattern=rggb for raw data types, other fields video-format,video-width user needs to fill */
+      /* User need to add something like remote-endpoint=<&out> under the node csiss_in:endpoint */
+      reg = <0>;
+      /*xlnx,cfa-pattern = "rggb";*/
+      xlnx,csi-pxl-format = <XCSI_DT_RAW8>;
+      xlnx,video-format = <XVIP_VF_MONO_SENSOR>;/*<3>; XVIP_VF_MONO_SENSOR<12>;XVIP_VF_MONO_SENSOR*/
+      xlnx,video-width = <8>;
+      direction = "input";
+    mipi_csi_incamera_1_mipi_csi2_rx_subsyst: endpoint {
+        data-lanes = <1 2 3 4>;
+        remote-endpoint = <&sensor_out_1>;
+      };
+    };
+  };
+};
+
+
+
+&camera_1_axi_iic {
+  //clocks = <&vid_s_axi_clk>;
+
+  avt_camera_1@3c {
+    compatible = "alliedvision,avt3"; /*"alliedvision,avt_csi2";*/
+
+    reg = <0x3c>;
+    csi_id = <0>;
+
+    /* powerdown-gpios = <&axi_gpio_0 0 GPIO_ACTIVE_LOW>;
+		reset-gpios = <&axi_gpio_0 4 GPIO_ACTIVE_LOW>; */
+
+    bcrm_wait_timeout = <5111>; /*<4000>;*/
+    mipi_csi;
+    status = "okay";
+
+    //streamon_delay = <100>;
+    phy_reset_on_start;
+    x_force_reset_on_init;
+
+    avt-ignore-yuv420_8_leg_avail;
+    avt-ignore-yuv420_8_avail;
+    avt-ignore-yuv420_10_avail;
+    avt-ignore-yuv420_8_csps_avail;
+    avt-ignore-yuv420_10_csps_avail;
+    x_avt-ignore-yuv422_8_avail;
+    avt-ignore-yuv422_10_avail;
+    x_avt-ignore-rgb888_avail;
+    avt-ignore-rgb666_avail;
+    avt-ignore-rgb565_avail;
+    avt-ignore-rgb555_avail;
+    avt-ignore-rgb444_avail;
+    avt-ignore-raw6_avail;
+    avt-ignore-raw7_avail;
+    //avt-ignore-raw8_avail;
+    avt-ignore-raw10_avail;
+    avt-ignore-raw12_avail;
+    avt-ignore-raw14_avail;
+
+    port {
+    sensor_out_1: endpoint {
+        remote-endpoint = <&mipi_csi_incamera_1_mipi_csi2_rx_subsyst>;
+        data-lanes = <1 2 3 4>;
+        clock-lanes = <0>;
+        link-frequencies = /bits/ 64 <750000000>;
+      };
+    };
+  };
+
+
+
+};
+
+//Camera 2
+
+&mipi_csi_port0camera_2_mipi_csi2_rx_subsyst {
+	/delete-property/ xlnx,cfa-pattern;
+};
+&mipi_csi_port1camera_2_mipi_csi2_rx_subsyst {
+     /delete-property/ xlnx,cfa-pattern;
+};
+
+
+&camera_2_v_frmbuf_wr {
+  xlnx,vid-formats = "rgb888", "bgr888", "xbgr8888", "xrgb8888", "uyvy", "y8", "vuy888", "xvuy8888", "yuyv", "nv12", "nv16", "y_u_v8", "tp31";
+  xlnx,dma-align = <32>;
+  xlnx,max-height = <16384>;
+  dma-coherent;
+  status = "okay";
+};
+
+
+&camera_2_mipi_csi2_rx_subsyst {
+  xlnx,csi-pxl-format = <XCSI_DT_RAW8>;/*<XCSI_DT_YUV4228B>;"RAW8";*/
+  status = "okay";
+mipi_csi_portscamera_2_mipi_csi2_rx_subsyst_0: ports {
+#address-cells = <1>;
+#size-cells = <0>;
+    xlnx,csi-pxl-format = <XCSI_DT_RAW8>;
+  mipi_csi_port1camera_2_mipi_csi2_rx_subsyst: port@1 {
+      /* Fill cfa-pattern=rggb for raw data types, other fields video-format and video-width user needs to fill */
+      reg = <1>;
+      /*xlnx,cfa-pattern = "rggb";*/
+      xlnx,video-format = <XVIP_VF_MONO_SENSOR>;/*<3>; XVIP_VF_MONO_SENSOR<12>;XVIP_VF_MONO_SENSOR*/
+      xlnx,csi-pxl-format = <XCSI_DT_RAW8>;
+      xlnx,video-width = <8>;
+      direction = "output";
+      //			mipi_csirx_outmipi_csi2rxss_0: endpoint {
+      //				remote-endpoint = <&v_frmbuf_wr_csi_0mipi_csi2rxss_0>;
+      //			};
+    };
+  mipi_csi_port0camera_2_mipi_csi2_rx_subsyst: port@0 {
+      /* Fill cfa-pattern=rggb for raw data types, other fields video-format,video-width user needs to fill */
+      /* User need to add something like remote-endpoint=<&out> under the node csiss_in:endpoint */
+      reg = <0>;
+      /*xlnx,cfa-pattern = "rggb";*/
+      xlnx,csi-pxl-format = <XCSI_DT_RAW8>;
+      xlnx,video-format = <XVIP_VF_MONO_SENSOR>;/*<3>; XVIP_VF_MONO_SENSOR<12>;XVIP_VF_MONO_SENSOR*/
+      xlnx,video-width = <8>;
+      direction = "input";
+    mipi_csi_incamera_2_mipi_csi2_rx_subsyst: endpoint {
+        data-lanes = <1 2 3 4>;
+        remote-endpoint = <&sensor_out_2>;
+      };
+    };
+  };
+};
+
+
+
+&camera_2_axi_iic {
+  //clocks = <&vid_s_axi_clk>;
+
+  avt_camera_2@3c {
+    compatible = "alliedvision,avt3"; /*"alliedvision,avt_csi2";*/
+
+    reg = <0x3c>;
+    csi_id = <0>;
+
+    /* powerdown-gpios = <&axi_gpio_0 0 GPIO_ACTIVE_LOW>;
+		reset-gpios = <&axi_gpio_0 4 GPIO_ACTIVE_LOW>; */
+
+    bcrm_wait_timeout = <5111>; /*<4000>;*/
+    mipi_csi;
+    status = "okay";
+
+    //streamon_delay = <100>;
+    phy_reset_on_start;
+    x_force_reset_on_init;
+
+    avt-ignore-yuv420_8_leg_avail;
+    avt-ignore-yuv420_8_avail;
+    avt-ignore-yuv420_10_avail;
+    avt-ignore-yuv420_8_csps_avail;
+    avt-ignore-yuv420_10_csps_avail;
+    x_avt-ignore-yuv422_8_avail;
+    avt-ignore-yuv422_10_avail;
+    x_avt-ignore-rgb888_avail;
+    avt-ignore-rgb666_avail;
+    avt-ignore-rgb565_avail;
+    avt-ignore-rgb555_avail;
+    avt-ignore-rgb444_avail;
+    avt-ignore-raw6_avail;
+    avt-ignore-raw7_avail;
+    //avt-ignore-raw8_avail;
+    avt-ignore-raw10_avail;
+    avt-ignore-raw12_avail;
+    avt-ignore-raw14_avail;
+
+    port {
+    sensor_out_2: endpoint {
+        remote-endpoint = <&mipi_csi_incamera_2_mipi_csi2_rx_subsyst>;
+        data-lanes = <1 2 3 4>;
+        clock-lanes = <0>;
+        link-frequencies = /bits/ 64 <750000000>;
+      };
+    };
+  };
+
+
+
+};
+
+
+//Camera 3
+
+
+&mipi_csi_port0camera_3_mipi_csi2_rx_subsyst {
+	/delete-property/ xlnx,cfa-pattern;
+};
+&mipi_csi_port1camera_3_mipi_csi2_rx_subsyst {
+     /delete-property/ xlnx,cfa-pattern;
+};
+
+
+&camera_3_v_frmbuf_wr {
+  xlnx,vid-formats = "rgb888", "bgr888", "xbgr8888", "xrgb8888", "uyvy", "y8", "vuy888", "xvuy8888", "yuyv", "nv12", "nv16", "y_u_v8", "tp31";
+  xlnx,dma-align = <32>;
+  xlnx,max-height = <16384>;
+  dma-coherent;
+  status = "okay";
+};
+
+
+&camera_3_mipi_csi2_rx_subsyst {
+  xlnx,csi-pxl-format = <XCSI_DT_RAW8>;/*<XCSI_DT_YUV4228B>;"RAW8";*/
+  status = "okay";
+mipi_csi_portscamera_3_mipi_csi2_rx_subsyst_0: ports {
+#address-cells = <1>;
+#size-cells = <0>;
+    xlnx,csi-pxl-format = <XCSI_DT_RAW8>;
+  mipi_csi_port1camera_3_mipi_csi2_rx_subsyst: port@1 {
+      /* Fill cfa-pattern=rggb for raw data types, other fields video-format and video-width user needs to fill */
+      reg = <1>;
+      /*xlnx,cfa-pattern = "rggb";*/
+      xlnx,video-format = <XVIP_VF_MONO_SENSOR>;/*<3>; XVIP_VF_MONO_SENSOR<12>;XVIP_VF_MONO_SENSOR*/
+      xlnx,csi-pxl-format = <XCSI_DT_RAW8>;
+      xlnx,video-width = <8>;
+      direction = "output";
+      //			mipi_csirx_outmipi_csi2rxss_0: endpoint {
+      //				remote-endpoint = <&v_frmbuf_wr_csi_0mipi_csi2rxss_0>;
+      //			};
+    };
+  mipi_csi_port0camera_3_mipi_csi2_rx_subsyst: port@0 {
+      /* Fill cfa-pattern=rggb for raw data types, other fields video-format,video-width user needs to fill */
+      /* User need to add something like remote-endpoint=<&out> under the node csiss_in:endpoint */
+      reg = <0>;
+      /*xlnx,cfa-pattern = "rggb";*/
+      xlnx,csi-pxl-format = <XCSI_DT_RAW8>;
+      xlnx,video-format = <XVIP_VF_MONO_SENSOR>;/*<3>; XVIP_VF_MONO_SENSOR<12>;XVIP_VF_MONO_SENSOR*/
+      xlnx,video-width = <8>;
+      direction = "input";
+    mipi_csi_incamera_3_mipi_csi2_rx_subsyst: endpoint {
+        data-lanes = <1 2 3 4>;
+        remote-endpoint = <&sensor_out_3>;
+      };
+    };
+  };
+};
+
+
+
+&camera_3_axi_iic {
+  //clocks = <&vid_s_axi_clk>;
+
+  avt_camera_3@3c {
+    compatible = "alliedvision,avt3"; /*"alliedvision,avt_csi2";*/
+
+    reg = <0x3c>;
+    csi_id = <0>;
+
+    /* powerdown-gpios = <&axi_gpio_0 0 GPIO_ACTIVE_LOW>;
+		reset-gpios = <&axi_gpio_0 4 GPIO_ACTIVE_LOW>; */
+
+    bcrm_wait_timeout = <5111>; /*<4000>;*/
+    mipi_csi;
+    status = "okay";
+
+    //streamon_delay = <100>;
+    phy_reset_on_start;
+    x_force_reset_on_init;
+
+    avt-ignore-yuv420_8_leg_avail;
+    avt-ignore-yuv420_8_avail;
+    avt-ignore-yuv420_10_avail;
+    avt-ignore-yuv420_8_csps_avail;
+    avt-ignore-yuv420_10_csps_avail;
+    //x_avt-ignore-yuv422_8_avail;
+    avt-ignore-yuv422_10_avail;
+    //x_avt-ignore-rgb888_avail;
+    avt-ignore-rgb666_avail;
+    avt-ignore-rgb565_avail;
+    avt-ignore-rgb555_avail;
+    avt-ignore-rgb444_avail;
+    avt-ignore-raw6_avail;
+    avt-ignore-raw7_avail;
+    //avt-ignore-raw8_avail;
+    avt-ignore-raw10_avail;
+    avt-ignore-raw12_avail;
+    avt-ignore-raw14_avail;
+
+    port {
+    sensor_out_3: endpoint {
+        remote-endpoint = <&mipi_csi_incamera_3_mipi_csi2_rx_subsyst>;
+        data-lanes = <1 2 3 4>;
+        clock-lanes = <0>;
+        link-frequencies = /bits/ 64 <750000000>;
+      };
+    };
+  };
+
+
+
+};
+
+
+/ {
+    fragment@1 {
+        __overlay__ {
+            vcap_camera_0_mipi_csi2_rx_subsyst {
+                dma-coherent;
+	    };
+            vcap_camera_1_mipi_csi2_rx_subsyst {
+                dma-coherent;
+	    };
+            vcap_camera_2_mipi_csi2_rx_subsyst {
+                dma-coherent;
+	    };
+
+            vcap_camera_3_mipi_csi2_rx_subsyst {
+                dma-coherent;
+	    };
+
+	};
+    };
+};
+
+
+
+/ {
+  fragment@3 {
+    target-path="/";
+    overlay3: __overlay__ {
+      avt_csitl {
+        supported_data_types = [ 31 ];
+        min_announced_frames = <1>;
+ 
+        ipu {
+          y_min = <64>;
+          y_inc = <1>;
+          y_max = <16384>;
+          x_min = <64>;
+          x_inc = <4>;
+          x_max = <8192>;
+        };
+      };
+    };      
+  };
+ 
+
+};
+

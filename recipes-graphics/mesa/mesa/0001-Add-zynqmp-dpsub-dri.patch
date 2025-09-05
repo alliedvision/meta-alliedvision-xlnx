@@ -1,0 +1,37 @@
+From 1f1ee00bac433befb6e69d06999e4d5a62b4b63a Mon Sep 17 00:00:00 2001
+From: Dennis Langenkamp <dennis.langenkamp@alliedvision.com>
+Date: Thu, 4 Sep 2025 09:14:46 +0200
+Subject: [PATCH] Add zynqmp-dpsub dri
+
+Add zynqmp-dpsub dri target
+
+Upstream-Status: Pending
+---
+ src/gallium/targets/dri/meson.build | 1 +
+ src/gallium/targets/dri/target.c    | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/src/gallium/targets/dri/meson.build b/src/gallium/targets/dri/meson.build
+index e74df9b..0d4de16 100644
+--- a/src/gallium/targets/dri/meson.build
++++ b/src/gallium/targets/dri/meson.build
+@@ -102,6 +102,7 @@ foreach d : [[with_gallium_kmsro, [
+                'sun4i-drm_dri.so',
+                'udl_dri.so',
+                'xlnx_dri.so',
++               'zynqmp-dpsub_dri.so',
+              ]],
+              [with_gallium_radeonsi, 'radeonsi_dri.so'],
+              [with_gallium_nouveau, 'nouveau_dri.so'],
+diff --git a/src/gallium/targets/dri/target.c b/src/gallium/targets/dri/target.c
+index b94ea3d..b1e32fd 100644
+--- a/src/gallium/targets/dri/target.c
++++ b/src/gallium/targets/dri/target.c
+@@ -130,6 +130,7 @@ DEFINE_LOADER_DRM_ENTRYPOINT(stm)
+ DEFINE_LOADER_DRM_ENTRYPOINT(sun4i_drm)
+ DEFINE_LOADER_DRM_ENTRYPOINT(udl)
+ DEFINE_LOADER_DRM_ENTRYPOINT(xlnx)
++DEFINE_LOADER_DRM_ENTRYPOINT(zynqmp_dpsub)
+ #endif
+ 
+ #if defined(GALLIUM_LIMA)

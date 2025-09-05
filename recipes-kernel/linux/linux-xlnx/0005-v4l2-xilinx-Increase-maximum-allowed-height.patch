@@ -1,0 +1,37 @@
+From ae4ef933dfdf145bd49137ff80aab2dba5abd430 Mon Sep 17 00:00:00 2001
+From: Dennis Langenkamp <dennis.langenkamp@alliedvision.com>
+Date: Tue, 5 Sep 2023 14:24:09 +0200
+Subject: [PATCH] v4l2: xilinx: Increase maximum allowed height
+
+The maximum allowed height was increased to support GenICam for CSI2 streaming with large sensors.
+---
+ drivers/dma/xilinx/xilinx_frmbuf.c         | 2 +-
+ drivers/media/platform/xilinx/xilinx-dma.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/dma/xilinx/xilinx_frmbuf.c b/drivers/dma/xilinx/xilinx_frmbuf.c
+index bb8b16af2916..0bc941af9889 100644
+--- a/drivers/dma/xilinx/xilinx_frmbuf.c
++++ b/drivers/dma/xilinx/xilinx_frmbuf.c
+@@ -1786,7 +1786,7 @@ static int xilinx_frmbuf_probe(struct platform_device *pdev)
+ 		return PTR_ERR(xdev->regs);
+ 
+ 	if (xdev->cfg->flags & XILINX_THREE_PLANES_PROP)
+-		max_height = 8640;
++		max_height = 16384;//8640;
+ 	else
+ 		max_height = 4320;
+ 
+diff --git a/drivers/media/platform/xilinx/xilinx-dma.c b/drivers/media/platform/xilinx/xilinx-dma.c
+index ddb0230d553a..55f858158382 100644
+--- a/drivers/media/platform/xilinx/xilinx-dma.c
++++ b/drivers/media/platform/xilinx/xilinx-dma.c
+@@ -36,7 +36,7 @@
+ #define XVIP_DMA_MIN_WIDTH		1U
+ #define XVIP_DMA_MAX_WIDTH		65535U
+ #define XVIP_DMA_MIN_HEIGHT		1U
+-#define XVIP_DMA_MAX_HEIGHT		8191U
++#define XVIP_DMA_MAX_HEIGHT		16384U//8191U
+ 
+ /* -----------------------------------------------------------------------------
+  * Helper functions

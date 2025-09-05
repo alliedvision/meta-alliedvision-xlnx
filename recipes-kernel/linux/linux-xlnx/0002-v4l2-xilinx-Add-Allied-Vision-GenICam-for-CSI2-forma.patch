@@ -1,0 +1,114 @@
+From 2675a658f95244ba062beaa5ea11e396c566d097 Mon Sep 17 00:00:00 2001
+From: Dennis Langenkamp <dennis.langenkamp@alliedvision.com>
+Date: Mon, 17 Apr 2023 13:34:12 +0200
+Subject: [PATCH] v4l2: xilinx: Add Allied Vision GenICam for CSI2 format
+ definitions
+
+The xilinx video driver now support the special GenICam for CSI2 format. With the adjustments it is possible to use GenICam for CSI2 streaming on the zynqmp.
+---
+ drivers/dma/xilinx/xilinx_frmbuf.c              | 10 ++++++++++
+ drivers/media/platform/xilinx/xilinx-csi2rxss.c |  5 +++--
+ drivers/media/platform/xilinx/xilinx-vip.c      |  2 ++
+ drivers/media/v4l2-core/v4l2-ioctl.c            |  1 +
+ include/uapi/linux/media-bus-format.h           |  3 ++-
+ include/uapi/linux/videodev2.h                  |  1 +
+ 6 files changed, 19 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/dma/xilinx/xilinx_frmbuf.c b/drivers/dma/xilinx/xilinx_frmbuf.c
+index 73c8386a4ac2..4b585021ad66 100644
+--- a/drivers/dma/xilinx/xilinx_frmbuf.c
++++ b/drivers/dma/xilinx/xilinx_frmbuf.c
+@@ -523,6 +523,16 @@ static const struct xilinx_frmbuf_format_desc xilinx_frmbuf_formats[] = {
+ 		.v4l2_fmt = V4L2_PIX_FMT_X423,
+ 		.fmt_bitmask = BIT(26),
+ 	},
++	{
++		.dts_name = "tp31",
++		.id = XILINX_FRMBUF_FMT_Y8,
++		.bpw = 32,
++		.ppw = 4,
++		.num_planes = 1,
++		.drm_fmt = 0,
++		.v4l2_fmt = V4L2_PIX_FMT_AVT_G4C2,
++		.fmt_bitmask = BIT(26),
++	},
+ };
+ 
+ /**
+diff --git a/drivers/media/platform/xilinx/xilinx-csi2rxss.c b/drivers/media/platform/xilinx/xilinx-csi2rxss.c
+index 6f8aa159b9df..30b65a87a98a 100644
+--- a/drivers/media/platform/xilinx/xilinx-csi2rxss.c
++++ b/drivers/media/platform/xilinx/xilinx-csi2rxss.c
+@@ -183,6 +183,7 @@ static const u32 xcsi2dt_mbus_lut[][2] = {
+ 	{ MIPI_CSI2_DT_RAW8, MEDIA_BUS_FMT_SBGGR8_1X8 },
+ 	{ MIPI_CSI2_DT_RAW8, MEDIA_BUS_FMT_SGBRG8_1X8 },
+ 	{ MIPI_CSI2_DT_RAW8, MEDIA_BUS_FMT_SGRBG8_1X8 },
++	{ MIPI_CSI2_DT_RAW8, MEDIA_BUS_FMT_AVT_G4C2_1X8 },
+ 	{ MIPI_CSI2_DT_RAW10, MEDIA_BUS_FMT_SRGGB10_1X10 },
+ 	{ MIPI_CSI2_DT_RAW10, MEDIA_BUS_FMT_SBGGR10_1X10 },
+ 	{ MIPI_CSI2_DT_RAW10, MEDIA_BUS_FMT_SGBRG10_1X10 },
+@@ -822,11 +823,11 @@ static int xcsi2rxss_enum_mbus_code(struct v4l2_subdev *sd,
+ 	int ret = 0;
+ 
+ 	/* RAW8 dt packets are available in all DT configurations */
+-	if (code->index < 4) {
++	if (code->index < 5) {
+ 		n = code->index;
+ 		dt = MIPI_CSI2_DT_RAW8;
+ 	} else if (state->datatype != MIPI_CSI2_DT_RAW8) {
+-		n = code->index - 4;
++		n = code->index - 5;
+ 		dt = state->datatype;
+ 	} else {
+ 		return -EINVAL;
+diff --git a/drivers/media/platform/xilinx/xilinx-vip.c b/drivers/media/platform/xilinx/xilinx-vip.c
+index d244697360af..1504419d0869 100644
+--- a/drivers/media/platform/xilinx/xilinx-vip.c
++++ b/drivers/media/platform/xilinx/xilinx-vip.c
+@@ -138,6 +138,8 @@ static const struct xvip_video_format xvip_video_formats[] = {
+ 	  2, 16, V4L2_PIX_FMT_SGBRG16, 1, 1, 1, 1 },
+ 	{ XVIP_VF_MONO_SENSOR, 16, "bggr", MEDIA_BUS_FMT_SBGGR16_1X16,
+ 	  2, 16, V4L2_PIX_FMT_SBGGR16, 1, 1, 1, 1 },
++	{ XVIP_VF_MONO_SENSOR, 8, NULL, MEDIA_BUS_FMT_AVT_G4C2_1X8,
++	  1, 8,  V4L2_PIX_FMT_AVT_G4C2, 1, 1, 1, 1 },
+ };
+ 
+ /**
+diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
+index e936359d0ca6..311569dfa692 100644
+--- a/drivers/media/v4l2-core/v4l2-ioctl.c
++++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+@@ -1568,6 +1568,7 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
+ 		case V4L2_PIX_FMT_PISP_COMP2_GBRG: descr = "PiSP 8b GBGB/RGRG mode2 compr"; break;
+ 		case V4L2_PIX_FMT_PISP_COMP2_BGGR: descr = "PiSP 8b BGBG/GRGR mode2 compr"; break;
+ 		case V4L2_PIX_FMT_PISP_COMP2_MONO: descr = "PiSP 8b monochrome mode2 compr"; break;
++		case V4L2_PIX_FMT_AVT_G4C2: descr = "AVT TP31"; break;
+ 		default:
+ 			if (fmt->description[0])
+ 				return;
+diff --git a/include/uapi/linux/media-bus-format.h b/include/uapi/linux/media-bus-format.h
+index 0b7ca85f7157..bebd1eea9ff7 100644
+--- a/include/uapi/linux/media-bus-format.h
++++ b/include/uapi/linux/media-bus-format.h
+@@ -158,7 +158,8 @@
+ /* JPEG compressed formats - next is	0x4002 */
+ #define MEDIA_BUS_FMT_JPEG_1X8			0x4001
+ 
+-/* Vendor specific formats - next is	0x5002 */
++/* Vendor specific formats - next is	0x5003 */
++#define MEDIA_BUS_FMT_AVT_G4C2_1X8        0x5002
+ 
+ /* S5C73M3 sensor specific interleaved UYVY and JPEG */
+ #define MEDIA_BUS_FMT_S5C_UYVY_JPEG_1X8		0x5001
+diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+index 4f68244055ea..41a2de31341c 100644
+--- a/include/uapi/linux/videodev2.h
++++ b/include/uapi/linux/videodev2.h
+@@ -841,6 +841,7 @@ struct v4l2_pix_format {
+ #define V4L2_PIX_FMT_QC10C    v4l2_fourcc('Q', '1', '0', 'C') /* Qualcomm 10-bit compressed */
+ #define V4L2_PIX_FMT_AJPG     v4l2_fourcc('A', 'J', 'P', 'G') /* Aspeed JPEG */
+ #define V4L2_PIX_FMT_HEXTILE  v4l2_fourcc('H', 'X', 'T', 'L') /* Hextile compressed */
++#define V4L2_PIX_FMT_AVT_G4C2    v4l2_fourcc('T', 'P', '3', '1') /* 0x31 mipi datatype  */
+ 
+ /* 10bit raw packed, 32 bytes for every 25 pixels, last LSB 6 bits unused */
+ #define V4L2_PIX_FMT_IPU3_SBGGR10	v4l2_fourcc('i', 'p', '3', 'b') /* IPU3 packed 10-bit BGGR bayer */

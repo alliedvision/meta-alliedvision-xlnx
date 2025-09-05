@@ -1,0 +1,76 @@
+From 8c40f968b5b337363e99ce503a63284d0965d6e1 Mon Sep 17 00:00:00 2001
+From: Dennis Langenkamp <dennis.langenkamp@alliedvision.com>
+Date: Tue, 5 Sep 2023 14:18:46 +0200
+Subject: [PATCH] v4l2: xilinx: Added missing raw8 mono and bayer formats
+
+The xilinx frame buffer read/write driver now supports bayer8 formats.
+Fixed rggb bayer8 format in xilinx-vip driver.
+Added Grey/Mono8 support to xilinx csi rx subsystem driver.
+---
+ drivers/dma/xilinx/xilinx_frmbuf.c            | 40 +++++++++++++++++++
+ .../media/platform/xilinx/xilinx-csi2rxss.c   |  1 +
+ 2 files changed, 41 insertions(+)
+
+diff --git a/drivers/dma/xilinx/xilinx_frmbuf.c b/drivers/dma/xilinx/xilinx_frmbuf.c
+index 4b585021ad66..0a0341d96acd 100644
+--- a/drivers/dma/xilinx/xilinx_frmbuf.c
++++ b/drivers/dma/xilinx/xilinx_frmbuf.c
+@@ -415,6 +415,46 @@ static const struct xilinx_frmbuf_format_desc xilinx_frmbuf_formats[] = {
+ 		.v4l2_fmt = V4L2_PIX_FMT_GREY,
+ 		.fmt_bitmask = BIT(16),
+ 	},
++	{
++		.dts_name = "y8",
++		.id = XILINX_FRMBUF_FMT_Y8,
++		.bpw = 32,
++		.ppw = 4,
++		.num_planes = 1,
++		.drm_fmt = DRM_FORMAT_Y8,
++		.v4l2_fmt = V4L2_PIX_FMT_SRGGB8,
++		.fmt_bitmask = BIT(16),
++	},
++	{
++		.dts_name = "y8",
++		.id = XILINX_FRMBUF_FMT_Y8,
++		.bpw = 32,
++		.ppw = 4,
++		.num_planes = 1,
++		.drm_fmt = DRM_FORMAT_Y8,
++		.v4l2_fmt = V4L2_PIX_FMT_SGRBG8,
++		.fmt_bitmask = BIT(16),
++	},
++	{
++		.dts_name = "y8",
++		.id = XILINX_FRMBUF_FMT_Y8,
++		.bpw = 32,
++		.ppw = 4,
++		.num_planes = 1,
++		.drm_fmt = DRM_FORMAT_Y8,
++		.v4l2_fmt = V4L2_PIX_FMT_SGBRG8,
++		.fmt_bitmask = BIT(16),
++	},
++	{
++		.dts_name = "y8",
++		.id = XILINX_FRMBUF_FMT_Y8,
++		.bpw = 32,
++		.ppw = 4,
++		.num_planes = 1,
++		.drm_fmt = DRM_FORMAT_Y8,
++		.v4l2_fmt = V4L2_PIX_FMT_SBGGR8,
++		.fmt_bitmask = BIT(16),
++	},
+ 	{
+ 		.dts_name = "y10",
+ 		.id = XILINX_FRMBUF_FMT_Y10,
+diff --git a/drivers/media/platform/xilinx/xilinx-csi2rxss.c b/drivers/media/platform/xilinx/xilinx-csi2rxss.c
+index 30b65a87a98a..0a3575c02674 100644
+--- a/drivers/media/platform/xilinx/xilinx-csi2rxss.c
++++ b/drivers/media/platform/xilinx/xilinx-csi2rxss.c
+@@ -179,6 +179,7 @@ static const u32 xcsi2dt_mbus_lut[][2] = {
+ 	{ MIPI_CSI2_DT_RGB888, MEDIA_BUS_FMT_RBG888_1X24 },
+ 	{ MIPI_CSI2_DT_RAW6, 0 },
+ 	{ MIPI_CSI2_DT_RAW7, 0 },
++	{ MIPI_CSI2_DT_RAW8, MEDIA_BUS_FMT_Y8_1X8 },
+ 	{ MIPI_CSI2_DT_RAW8, MEDIA_BUS_FMT_SRGGB8_1X8 },
+ 	{ MIPI_CSI2_DT_RAW8, MEDIA_BUS_FMT_SBGGR8_1X8 },
+ 	{ MIPI_CSI2_DT_RAW8, MEDIA_BUS_FMT_SGBRG8_1X8 },
