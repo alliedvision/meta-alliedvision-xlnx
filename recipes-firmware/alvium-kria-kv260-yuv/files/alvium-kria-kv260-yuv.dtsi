@@ -188,7 +188,7 @@ mipi_csi_portscamera_1_mipi_csi2_rx_subsyst_0: ports {
 
               status = "okay";
 
-              phy_reset_on_start;
+              streamon_delay = <20>;
 
               port {
               sensor_out_0: endpoint {
@@ -211,7 +211,7 @@ mipi_csi_portscamera_1_mipi_csi2_rx_subsyst_0: ports {
             
             status = "okay";
 
-            phy_reset_on_start;
+            streamon_delay = <20>;
             
             port {
               sensor_out_1: endpoint {
