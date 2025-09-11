@@ -7,5 +7,6 @@ SRC_URI += " \
     file://0004-v4l2-xilinx-Fixed-first-frame-is-always-dropped.patch \
     file://0005-v4l2-xilinx-Increase-maximum-allowed-height.patch \
     file://0006-Fixed-PR-review-findings.patch \
+    file://cma.cfg \
 "
 
