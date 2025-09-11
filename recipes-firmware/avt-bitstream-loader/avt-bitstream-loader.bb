@@ -9,7 +9,7 @@ RDEPENDS:${PN} += "bash"
 
 S = "${WORKDIR}"
 
-AVT_BITSTREAM_PREFIX:zcu106 = "alvium-fmc-zcu106"
+AVT_BITSTREAM_PREFIX:zcu106-zynqmp = "alvium-fmc-zcu106"
 AVT_BITSTREAM_PREFIX:kria = "alvium-kria-kv260"
 
 do_compile() {
@@ -27,3 +27,7 @@ do_install() {
 
 FILES:${PN} += "${bindir}/avt-load-bitstream"
 FILES:${PN} += "${sysconfdir}/modprobe.d/blacklist.conf"
+
+COMPATIBLE_MACHINE ?= "^$"
+COMPATIBLE_MACHINE:zcu106-zynqmp = "zcu106-zynqmp"
+COMPATIBLE_MACHINE:kria = "kria"
