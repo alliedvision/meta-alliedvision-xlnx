@@ -104,40 +104,12 @@ mipi_csi_portscamera_0_mipi_csi2_rx_subsyst_0: ports {
   //clocks = <&vid_s_axi_clk>;
 
   avt_camera_0@3c {
-    compatible = "alliedvision,avt3"; /*"alliedvision,avt_csi2";*/
+    compatible = "alliedvision,avt_csi2";
 
     reg = <0x3c>;
-    csi_id = <0>;
-
-    /* powerdown-gpios = <&axi_gpio_0 0 GPIO_ACTIVE_LOW>;
-		reset-gpios = <&axi_gpio_0 4 GPIO_ACTIVE_LOW>; */
-
-    bcrm_wait_timeout = <5111>; /*<4000>;*/
-    mipi_csi;
     status = "okay";
 
-    //streamon_delay = <100>;
-    phy_reset_on_start;
-    x_force_reset_on_init;
-
-    avt-ignore-yuv420_8_leg_avail;
-    avt-ignore-yuv420_8_avail;
-    avt-ignore-yuv420_10_avail;
-    avt-ignore-yuv420_8_csps_avail;
-    avt-ignore-yuv420_10_csps_avail;
-    x_avt-ignore-yuv422_8_avail;
-    avt-ignore-yuv422_10_avail;
-    x_avt-ignore-rgb888_avail;
-    avt-ignore-rgb666_avail;
-    avt-ignore-rgb565_avail;
-    avt-ignore-rgb555_avail;
-    avt-ignore-rgb444_avail;
-    avt-ignore-raw6_avail;
-    avt-ignore-raw7_avail;
-    avt-ignore-raw8_avail;
-    avt-ignore-raw10_avail;
-    avt-ignore-raw12_avail;
-    avt-ignore-raw14_avail;
+    streamon_delay = <20>;
 
     port {
     sensor_out_0: endpoint {
@@ -214,40 +186,12 @@ mipi_csi_portscamera_1_mipi_csi2_rx_subsyst_0: ports {
   //clocks = <&vid_s_axi_clk>;
 
   avt_camera_1@3c {
-    compatible = "alliedvision,avt3"; /*"alliedvision,avt_csi2";*/
+        compatible = "alliedvision,avt_csi2";
 
     reg = <0x3c>;
-    csi_id = <0>;
-
-    /* powerdown-gpios = <&axi_gpio_0 0 GPIO_ACTIVE_LOW>;
-		reset-gpios = <&axi_gpio_0 4 GPIO_ACTIVE_LOW>; */
-
-    bcrm_wait_timeout = <5111>; /*<4000>;*/
-    mipi_csi;
     status = "okay";
 
-    //streamon_delay = <100>;
-    phy_reset_on_start;
-    x_force_reset_on_init;
-
-    avt-ignore-yuv420_8_leg_avail;
-    avt-ignore-yuv420_8_avail;
-    avt-ignore-yuv420_10_avail;
-    avt-ignore-yuv420_8_csps_avail;
-    avt-ignore-yuv420_10_csps_avail;
-    x_avt-ignore-yuv422_8_avail;
-    avt-ignore-yuv422_10_avail;
-    x_avt-ignore-rgb888_avail;
-    avt-ignore-rgb666_avail;
-    avt-ignore-rgb565_avail;
-    avt-ignore-rgb555_avail;
-    avt-ignore-rgb444_avail;
-    avt-ignore-raw6_avail;
-    avt-ignore-raw7_avail;
-    avt-ignore-raw8_avail;
-    avt-ignore-raw10_avail;
-    avt-ignore-raw12_avail;
-    avt-ignore-raw14_avail;
+    streamon_delay = <20>;
 
     port {
     sensor_out_1: endpoint {
@@ -325,40 +269,12 @@ mipi_csi_portscamera_2_mipi_csi2_rx_subsyst_0: ports {
   //clocks = <&vid_s_axi_clk>;
 
   avt_camera_2@3c {
-    compatible = "alliedvision,avt3"; /*"alliedvision,avt_csi2";*/
+        compatible = "alliedvision,avt_csi2";
 
     reg = <0x3c>;
-    csi_id = <0>;
-
-    /* powerdown-gpios = <&axi_gpio_0 0 GPIO_ACTIVE_LOW>;
-		reset-gpios = <&axi_gpio_0 4 GPIO_ACTIVE_LOW>; */
-
-    bcrm_wait_timeout = <5111>; /*<4000>;*/
-    mipi_csi;
     status = "okay";
 
-    //streamon_delay = <100>;
-    phy_reset_on_start;
-    x_force_reset_on_init;
-
-    avt-ignore-yuv420_8_leg_avail;
-    avt-ignore-yuv420_8_avail;
-    avt-ignore-yuv420_10_avail;
-    avt-ignore-yuv420_8_csps_avail;
-    avt-ignore-yuv420_10_csps_avail;
-    x_avt-ignore-yuv422_8_avail;
-    avt-ignore-yuv422_10_avail;
-    x_avt-ignore-rgb888_avail;
-    avt-ignore-rgb666_avail;
-    avt-ignore-rgb565_avail;
-    avt-ignore-rgb555_avail;
-    avt-ignore-rgb444_avail;
-    avt-ignore-raw6_avail;
-    avt-ignore-raw7_avail;
-    avt-ignore-raw8_avail;
-    avt-ignore-raw10_avail;
-    avt-ignore-raw12_avail;
-    avt-ignore-raw14_avail;
+    streamon_delay = <20>;
 
     port {
     sensor_out_2: endpoint {
@@ -435,40 +351,12 @@ mipi_csi_portscamera_3_mipi_csi2_rx_subsyst_0: ports {
   //clocks = <&vid_s_axi_clk>;
 
   avt_camera_3@3c {
-    compatible = "alliedvision,avt3"; /*"alliedvision,avt_csi2";*/
+    compatible = "alliedvision,avt_csi2";
 
     reg = <0x3c>;
-    csi_id = <0>;
-
-    /* powerdown-gpios = <&axi_gpio_0 0 GPIO_ACTIVE_LOW>;
-		reset-gpios = <&axi_gpio_0 4 GPIO_ACTIVE_LOW>; */
-
-    bcrm_wait_timeout = <5111>; /*<4000>;*/
-    mipi_csi;
     status = "okay";
 
-    //streamon_delay = <100>;
-    phy_reset_on_start;
-    x_force_reset_on_init;
-
-    avt-ignore-yuv420_8_leg_avail;
-    avt-ignore-yuv420_8_avail;
-    avt-ignore-yuv420_10_avail;
-    avt-ignore-yuv420_8_csps_avail;
-    avt-ignore-yuv420_10_csps_avail;
-    x_avt-ignore-yuv422_8_avail;
-    avt-ignore-yuv422_10_avail;
-    x_avt-ignore-rgb888_avail;
-    avt-ignore-rgb666_avail;
-    avt-ignore-rgb565_avail;
-    avt-ignore-rgb555_avail;
-    avt-ignore-rgb444_avail;
-    avt-ignore-raw6_avail;
-    avt-ignore-raw7_avail;
-    avt-ignore-raw8_avail;
-    avt-ignore-raw10_avail;
-    avt-ignore-raw12_avail;
-    avt-ignore-raw14_avail;
+    streamon_delay = <20>;
 
     port {
     sensor_out_3: endpoint {
