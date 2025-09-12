@@ -3,7 +3,8 @@
 Allied Vision camera support for Xilinx systems. 
 
 Compatible systems:
-- Xilinx Kriv KV260
+- AMD Kria KV260 Vision AI Starter Kit
+- AMD Zynq UltraScale+ MPSOC ZCU106 Evaluation Kit
 
 ## Dependencies
 This layer depends on:
