@@ -18,14 +18,14 @@ do_compile() {
 }
 
 do_install() {
-    install -d ${D}${bindir}
-    install -m 755 ${B}/avt-load-bitstream ${D}${bindir}/avt-load-bitstream
+    install -d ${D}${sbindir}
+    install -m 755 ${B}/avt-load-bitstream ${D}${sbindir}/avt-load-bitstream
     install -d ${D}${sysconfdir}/modprobe.d
     echo "blacklist avt_csi2-3" >  ${D}${sysconfdir}/modprobe.d/blacklist.conf
     chmod 0644 ${D}${sysconfdir}/modprobe.d/blacklist.conf
 }
 
-FILES:${PN} += "${bindir}/avt-load-bitstream"
+FILES:${PN} += "${sbindir}/avt-load-bitstream"
 FILES:${PN} += "${sysconfdir}/modprobe.d/blacklist.conf"
 
 COMPATIBLE_MACHINE ?= "^$"
