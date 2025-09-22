@@ -14,3 +14,6 @@ REFERENCE_IMAGE_PACKAGES:append:zcu106-zynqmp = " \
     alvium-fmc-zcu106-raw8 \
     alvium-fmc-zcu106-rgb \
 "
+
+MALI_KERNEL_MODULE = "${@bb.utils.contains('DISTRO_FEATURES', 'libmali', '', 'kernel-module-lima', d)}"
+REFERENCE_IMAGE_PACKAGES:append = " ${@bb.utils.contains('MACHINE_FEATURES', 'mali400', ' ${MALI_KERNEL_MODULE}', '', d)} "
